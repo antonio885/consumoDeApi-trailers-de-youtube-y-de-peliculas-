@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="css/bootstrap.css">
+</head>
+<body onload="mostrarpelicula()"  style="background-image:url(/img/images.jpg) ; background-repeat: no-repeat; background-size: cover; ">
+    <div class="container-fluid mt-3  " >
+        <div class="row align-content-center text-uppercase  ">
+            <div class="d-flex justify-content-center align-content-center  ">
+        <div class=""  id="visual"></div>
+        <iframe style="padding: 200px; " src="" id="visualizartrailer" frameborder="0" allowfullscreen></iframe>
+    </div>
+   
+    </div>
+</div>
+</body>
+</html>
+<script>
+
+
+
+    function mostrarpelicula(){
+        trailer()
+        return new Promise(response => {
+        const url = `http://www.omdbapi.com/?i=`
+        let codigo = localStorage.codigoId
+        const llave = `&apikey=adcc98f`
+ 
+        console.log(codigo)
+        fetch( `${url}${codigo}${llave}`)
+
+               .then(response => response.json())
+               .then((data) => {
+                console.log(data)
+                   document.getElementById("visual").innerHTML= `<div class="card" style="width: 18rem;">
+   <img src="${data.Poster}" class="card-img-top" alt="...">
+   <div class="card-body">
+   <p class="card-text">${data.Title}</p>
+   <p class="card-text">Genero: ${data.Genre}</p>
+    <p class="card-text">Director: ${data.Director}</p>
+     <p class="card-text">Año: ${data.Year}</p>
+      <p class="card-text">Trama: ${data.Plot}</p>
+      <p class="card-text">Puntuacion: ${data.imdbRating}</p>
+   </div>
+   </div>`
+               })
+            
+           })
+       
+       }
+       function trailer(){
+        return new Promise(response=>{
+        const key = `+trailer&key=AIzaSyCArKpm6Lx04_i1C8aMYCt-9RaStfUIHQo`
+        const DosUrl = `https://www.youtube.com/embed/`
+        let id = localStorage.codigoId
+        let https = `https://www.googleapis.com/youtube/v3/search?part=snippet&q=`
+        let urlss = `${https}'${id}'${key}`
+       
+        fetch(urlss)
+        .then(response => response.json())
+        .then(data =>{
+            let nombretrailer = data.items[1].id.videoId
+            let htt = `${DosUrl}${nombretrailer}`
+            console.log(htt)
+console.log(urlss)
+
+document.getElementById("visualizartrailer").src = htt
+
+        })
+        // https://www.youtube.com/embed/${trailerId}
+        // https://www.googleapis.com/youtube/v3/search?part=snippet&q=${movieId}+trailer&key=${youtubeApiKey}
+    })
+       }
+    </script>

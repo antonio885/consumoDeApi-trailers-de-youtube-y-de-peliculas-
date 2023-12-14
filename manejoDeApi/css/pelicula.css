@@ -1,0 +1,13 @@
+.inicio{
+   text-align: center;
+   
+}
+
+.content{
+    background-color: rgb(116, 116, 116);
+    color: white;
+    display: flex;
+   justify-content: space-around;
+   align-items: center;
+  
+}

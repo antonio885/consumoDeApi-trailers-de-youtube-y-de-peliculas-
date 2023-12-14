@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="css/bootstrap.css">
+    <link rel="stylesheet" href="css/pelicula.css">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.14.0/css/all.css"/>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-GLhlTQ8iRABdZLl6O3oVMWSktQOp6b7In1Zl3/Jr59b6EGGoI1aFkw7cmDA6j6gD" crossorigin="anonymous">
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js" integrity="sha384-w76AqPfDkMBDXo30jS1Sgez6pr3x5MlQ1ZAGC+nuZB+EYdgRZgiwxhTBTkF7CXvN" crossorigin="anonymous"></script>
+</head>
+
+<body  style="background-image:url(/img/images.jpg) ; background-repeat: no-repeat; background-size: cover; " onload="recomendacion()">
+    <div class="inicio">
+        <div class="content">
+        <div class="d-flex align-items-center ">
+            <h1 class="me-5" >Peliculas</h1>
+            <div>
+                <button onclick="mostrarfavorito()"  class="btn btn-primary" type="button" data-bs-toggle="offcanvas" data-bs-target="#staticBackdrop" aria-controls="staticBackdrop">
+                  peliculas guardadas+
+                  </button>
+                  <div class="offcanvas offcanvas-start" data-bs-backdrop="static" tabindex="-1" id="staticBackdrop" aria-labelledby="staticBackdropLabel">
+                    <div class="offcanvas-header">
+                      <h5 class="offcanvas-title" id="staticBackdropLabel">pelicula favoritas</h5>
+                      <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+                    </div>
+                    <div class="offcanvas-body">
+                      <ul id="mostrarpelis">
+                        I will not close if you click outside of me.
+                      </ul>
+                    </div>
+                  </div>
+                 
+            </div>
+        </div>
+        <div class="navegador   flex-column  "  >
+            <div class="d-flex align-items-center">
+            <input type="text" id="nombrePelicu" style="width: 400px; height: 40px;"  onkeyup="autocomple()">
+            <img src="img/download-removebg-preview.png" width="40px"  height="30px"  alt="">
+            <button class="mt-3 bg-info w-50 fw-semibold fs-5 " style="height: 30px; margin-bottom:20px ;" id="btnbuscar" onclick="mostrarpelicula()" >buscar pelicula</button>  
+        </div>
+        <div class="   " id="autocom"></div>
+        </div>
+        
+              
+    </div>
+        <div class="col-12   " id="listpelicula"></div>
+        <div class="mt-5 ">
+            <div id="entrete" class="d-flex justify-content-center  " >
+
+        </div>
+      
+        </div>
+        <div class="d-flex justify-content-center   " id="listareco"></div>
+    </div>
+
+</body>
+
+</html>
+<script>
+    // const pelicula = []
+
+
+    let nombrePelicula = document.getElementById("nombrePelicu")
+
+    function mostrarpelicula() {
+       
+        let nombrePeli = nombrePelicula.value
+        let urls = `http://www.omdbapi.com/?s=${nombrePeli}&apikey=adcc98f`
+
+        fetch(urls)
+       .then(response => response.json())
+            .then(data => {
+               
+         
+                console.log(data)
+                let cate = ""
+                data.Search.forEach(element => {
+                    let id = element.imdbID
+                 
+    
+                cate +=  `<div class="d-flex card justify-content-center" style="width: 18rem; ">
+                    <a onclick="enviar('${id}')" href="verpeli.html">
+                    <img src="${element.Poster}" class="card-img-top" alt="..."></a>
+
+  <div class="card-body">
+    <p class="card-text">${element.Title}</p>
+    <p class="card-text" id="Tipo${id}"></p>
+    <p class="card-text" id="lanzamiento${id}"></p>
+    <p class="card-text" id="genero${id}" ></p>
+    <p class="card-text" id="Valoracion${id}"></p>
+
+    <button style="width:100px; background-color:blue;" onclick="añadir('${id}')"><i  class="fas fa-regular fa-thumbs-up"></i></button>
+    
+  </div>
+</div>`
+
+        fetch(`http://www.omdbapi.com/?i=${id}&apikey=adcc98f`)
+        .then(response => response.json())
+        .then(data =>{
+            console.log(data)
+            let genero = data.Genre
+            let rating = data.imdbRating
+            let tiempo = data.Year
+            let tipo = data.Type
+
+            document.getElementById(`genero${id}`).innerHTML = `genero: ${genero}`
+            document.getElementById(`Valoracion${id}`).innerHTML = `valoracion: ${rating}`
+            document.getElementById(`lanzamiento${id}`).innerHTML = `Lanzamiento: ${tiempo}`
+            document.getElementById(`Tipo${id}`).innerHTML = `${tipo}`
+        })
+        document.getElementById("entrete").innerHTML = cate 
+            })
+            
+
+          
+                })
+                document.getElementById("autocom").innerHTML = ""
+                document.getElementById("autocom").style = "overflow: hidden; "
+                document.getElementById("entrete").innerHTML = ""
+        
+    }
+
+    // function extraer(){
+    //    let datos = document.getElementById("nombrePelicu")
+    //    let 
+    //     let url = `http://www.omdbapi.com/?t=${nombrePeli}&apikey=adcc98f`
+    //     fetch(url)
+    //     .then(response => response.json())
+    //     .then(data =>{
+    //         let genero = data.Genre
+    //         document.getElementById(`genero${codigo}`).innerHTML = `genero${genero}`
+
+    //     })
+    // }
+    function enviar(codigo) {
+       
+        // alert(codigo);
+        localStorage.setItem("codigoId",codigo)
+       
+    }
+
+    var arreglopeli = []
+   
+    function autocomple(){
+       let listapeli = ""
+        let nombrePeliculas = document.getElementById("nombrePelicu").value
+  document.getElementById("nombrePelicu").innerHTML = nombrePeliculas
+  if(nombrePeliculas.length >= 3){
+        let ulrDos = `http://www.omdbapi.com/?s=${nombrePeliculas}&apikey=adcc98f`
+        fetch(ulrDos)
+        .then(response => response.json())
+        .then(data =>{
+            console.log(data.Search);
+    data.Search.forEach(element =>{
+        id = element.imdbID
+
+        listapeli += `<a  class="list-group-item list-group-item-action active "  onclick= "enviar('${id}')" href = "verpeli.html">${element.Title}  <img  width="50px" src= "${element.Poster}" ></a>`
+    })
+  
+        document.getElementById("autocom").innerHTML = listapeli
+        document.getElementById("autocom").style = " overflow:scroll; height:400px; width:22%;  position: absolute;   background-color: rgb(13, 110, 253); z-index: 4;"
+        document.getElementById("entrete").innerHTML = ""
+        })
+    }else{
+        document.getElementById("autocom").innerHTML = ""
+        document.getElementById("autocom").style = "overflow: hidden; "
+        document.getElementById("entrete").innerHTML = ""
+    }
+    }
+    const favoritos = []
+
+    function añadir(codigo){
+
+favoritos.push(codigo)
+console(favoritos)
+
+
+    }
+
+    function mostrarfavorito(){
+        
+       let listfavoritos= ""
+    
+        favoritos.forEach(element=>{
+        let idcodigo = element
+        const urlfavo = `http://www.omdbapi.com/?i=`
+        const keyfavo = `&apikey=adcc98f`
+        let urlcomple= `${urlfavo}${idcodigo}${keyfavo}`
+        fetch(urlcomple)
+    
+            .then(response => response.json())
+            .then(data =>{
+                let imagen = data.Poster
+                let titulo = data.Title
+                let rating = data.imdbRating
+                let tipo = data.Type
+
+                listfavoritos += `<div class="card mb-3" style="max-width: 540px;">
+                <div class="row g-0">
+                    <div class="col-md-4">
+                        <a onclick="enviar('${id}')" href="verpeli.html">
+                    <img src="${imagen}" class="img-fluid rounded-start" alt="...">
+                    </a>
+                    </div>
+                    <div class="col-md-8">
+                    <div class="card-body">
+                        <h5 class="card-title">${titulo}</h5>
+                        <p class="card-text">Valoracio: ${rating} <i class=" fas fa-sharp fa-solid fa-star"></i></p>
+                        <p class="card-text"><small class="text-muted">${tipo}</small></p>
+        |
+                    </div>
+                    </div>
+                </div>
+                </div>`
+                document.getElementById("mostrarpelis").innerHTML= listfavoritos
+                
+            })
+           
+        })
+    }
+    function recomendacion(){
+        let recom = ""
+        const urlre = `http://www.omdbapi.com/?s=`
+        const keyre = `&apikey=adcc98f`
+        const recomendar = ['comedia','drama','accion','terror','animacion', 'aventura', 'ciencia ficcion' ]
+        const mostrarrecon = recomendar[Math.ceil(Math.random() * recomendar.length)]
+        let urlcompleta = `${urlre}${mostrarrecon}${keyre}`
+        for (let i = 0; i <= 6; i++) {
+        fetch(urlcompleta)
+        
+        .then(response => response.json())
+        .then(data =>{
+            const recomendacionpeli = data.Search[Math.ceil(Math.random() * data.Search.length)]
+            const titulo = recomendacionpeli.Title
+                const imagen = recomendacionpeli.Poster
+                const tipo = recomendacionpeli.Type
+                const rating =  recomendacionpeli.imdbRating
+                const id = recomendacionpeli.imdbID
+
+                recom += `<div class="card mt-4 d-flex justify-content-around ms-4" style="max-width: 540px; ">
+                <div class="row g-0">
+                    <div class="col-md-4">
+                        <a onclick="enviar('${id}')" href="verpeli.html" >
+                    <img src="${imagen}" class="img-fluid rounded-start" alt="...">
+                    </a>
+                    </div>
+                    <div class="col-md-8">
+                    <div class="card-body">
+                        <h5 class="card-title">${titulo}</h5>
+                        <p class="card-text">Valoracio: ${rating} <i class=" fas fa-sharp fa-solid fa-star"></i></p>
+                        <p class="card-text"><small class="text-muted">${tipo}</small></p>
+        |
+                    </div>
+                    </div>
+                </div>
+                </div>`
+                document.getElementById("listareco").innerHTML = recom
+        })
+    }
+    }
+    // function eliminarfavorito(mostrarfavorito){
+    //     favoritos.pop(mostrarfavorito)
+    //     console.log(favoritos)
+      
+
+    // }
+//     function autocomple(){
+//         let textobuscar = document.getElementById("btnbuscar").value
+//         if(textobuscar.length >= 3){
+//             const filtropelicula = arreglopeli.filter(filtrarpeli)
+//             console.log(filtropelicula)
+//             let listapeli = `<div class="list-group position-absolute ">`
+//         filtropelicula.forEach(element =>{
+//     listapeli += `<a  class="list-group-item list-group-item-action active ">${element.Title}  <img class="w-25"  ></a>`
+    
+// })
+// lista +=  `</div>`
+// document.getElementById("listpelicula").innerHTML = listapeli
+//         }
+//     }
+//     function filtrarpeli(element){
+//         let textobuscar = document.getElementById("btnbuscar").value
+//         let nombre = data.Title
+//         return Title.includes(textobuscar.toLowerCase())
+//     }
+
+  
+    // function iconopeli(title){
+    //     fetch(title)
+    //     .then(response => response.json())
+    //     .then(data =>{
+    //         let icono = element.Poster
+    //         document.getElementById("icono")
+    //     })
+
+    // }
+    
+
+
+//     function mostrarpeliculas(){
+//         llamarpelicula().then(Response =>{
+//             let esquema     
+
+//             pelicula.forEach((element)=>{
+//                 esquema += `<div class="card" style="width: 18rem;">
+//   <img src="..." class="card-img-top" alt="...">
+//   <div class="card-body">
+//     <p class="card-text">${element.Search[0].Title}</p>
+//   </div>
+// </div>`
+//             })
+//             document.getElementById("entrete").innerHTML = esquema
+//         })
+//     }
+//  function detallepelicula(){
+
+//  }
+</script>
